@@ -3,7 +3,6 @@ payload = {
     'priceRangeMaxPrice': '',
     'btnAllOptUse': 'true',
     'searchMakerRep[]': '',
-    'searchAttributeValueRep[]':'', #
     'searchAttributeValue[]':'',
     'page': '1',
     'listCategoryCode': '751',
@@ -55,3 +54,19 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
     'X-Requested-With': 'XMLHttpRequest'
 }
+
+def set_listing(a):
+    payload['sortMethod'] = str(a)
+def set_cpu():
+    payload['listCategoryCode'] = '747'
+    payload['categoryCode'] = '747'
+    payload['physicsCate1'] = '861'
+    payload['physicsCate2'] = '873'
+    payload['physicsCate3'] = '0'
+    payload['physicsCate4'] = '0'
+def set_cpu_maker(): # fixed Intel
+    payload['searchMaker'] = '3156'
+
+def set_cpu_arch(): # fixed RaptorLake
+    #payload['searchAttributeValueRep[]'] = '747|32302|807919|OR'
+    payload['searchAttributeValue[]'] = '747|32302|807919|OR'

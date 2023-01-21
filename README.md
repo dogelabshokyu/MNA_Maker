@@ -75,6 +75,7 @@ sProductListApi: search
 priceRangeMin/MaxPrice : price range  
 btnAllOptUse : ?  
 searchAttributeValueRep / searchAttributeValue : 옵션 753(VGA). 658(NVIDIA)/657(AMD), 805762(4090)/818815(7900XTX)  
+ *Rep는 리스트 상단 옵션  
 page : 서칭 페이지  
 listCategorycode : 상품 종류 753(VGA)  
 categoryCode : 위와 동일  

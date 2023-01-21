@@ -14,7 +14,7 @@ payload = {
     'physicsCate4': '0',
     'viewMethod': 'LIST',   # LIST/IMAGE
     'sortMethod': 'BEST',   # BEST/NEW/MinPrice/MaxPrice/MaxMall/BoardCount
-    'listCount': '90',      # 30/60/90
+    'listCount': '30',      # 30/60/90
     'group': '11',
     'depth': '2',
     'brandName': '',

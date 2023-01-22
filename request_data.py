@@ -21,8 +21,6 @@ payload = {
     'searchOptionName': '',
     'sDiscountProductRate': '0',
     'sInitialPriceDisplay': 'N',
-    'sPowerLinkKeyword': '메인보드',
-    'oCurrentCategoryCode': 'a:2:{i:1;i:97;i:2;i:751;}',
     'sMallMinPriceDisplayYN': '',
     'undefined': '',
     'innerSearchKeyword': '',   # exclude with -"string"

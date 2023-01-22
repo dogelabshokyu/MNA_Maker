@@ -1,5 +1,6 @@
 # Python Library
 import requests
+import re
 from bs4 import BeautifulSoup
 import json
 
@@ -19,20 +20,28 @@ response.raise_for_status()
 yammysoup = BeautifulSoup(response.text, "lxml")
 #print(yammysoup)
 
-pINFO = yammysoup.findAll(class_="prod_item prod_layer")
+pINFO = yammysoup.findAll(class_=re.compile("^prod_item prod_layer$(?!product-pot$)"))
 #pINFO = yammysoup.findAll(class_="prod_item prod_layer width_change")
 #print(pINFO)
 
 for i in pINFO:
     everytext = i.text
     purestr = everytext\
-        .replace("		","")\
-        .replace("\n","")\
+        .replace("		", "")\
+        .replace("\n", "")\
         .replace("이미지보기", "")\
-        .replace("인기","")\
-        .replace("동영상 재생","")
+        .replace("인기", "")\
+        .replace("동영상 재생", "")
+    clrstr = everytext\
+        .replace("		", "")\
+        .replace("\n", "")\
+        .replace("이미지보기", "")\
+        .replace("인기", "")\
+        .replace("동영상 재생", "")\
+        .replace(" 순위", "순위 ")\
+        .replace(" / ", '	')\
+        .replace("상세 스펙", "	")
 
-    clrstr = everytext.replace("		","").replace("\n","").replace("이미지보기", "")\
-        .replace("인기","").replace("동영상 재생","").replace(" 순위","순위 ").replace(" / ", '	').replace("상세 스펙","	")
     print(purestr)
+    print("\t\tFORL OOPED\t\t")
     #print(clrstr)

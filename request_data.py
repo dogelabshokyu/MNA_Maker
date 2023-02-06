@@ -13,7 +13,7 @@ payload = {
     'physicsCate4': '0',
     'viewMethod': 'LIST',   # LIST/IMAGE
     'sortMethod': 'BEST',   # BEST/NEW/MinPrice/MaxPrice/MaxMall/BoardCount
-    'listCount': '30',      # 30/60/90
+    'listCount': '90',      # 30/60/90
     'group': '11',
     'depth': '2',
     'brandName': '',
@@ -23,7 +23,8 @@ payload = {
     'sInitialPriceDisplay': 'N',
     'sMallMinPriceDisplayYN': '',
     'undefined': '',
-    'innerSearchKeyword': '',   # exclude with -"string"
+    'innerSearchKeyword': '-해외구매 -중고 -렌탈',   # exclude with -"string"
+    'innerDetailSearchKeyword': '!해외구매|!중고|!렌탈',
     'listPackageType': '1',
     'categoryMappingCode': '703',
     'priceUnit': '0',
@@ -62,9 +63,17 @@ def set_cpu():
     payload['physicsCate2'] = '873'
     payload['physicsCate3'] = '0'
     payload['physicsCate4'] = '0'
-def set_cpu_maker(): # fixed Intel
-    payload['searchMaker'] = '3156'
 
-def set_cpu_arch(): # fixed RaptorLake
+#def set_cpu_maker(): # fixed Intel
+    #payload['searchMaker'] = '3156'
+
+#def set_cpu_arch(): # fixed RaptorLake
     #payload['searchAttributeValueRep[]'] = '747|32302|807919|OR'
-    payload['searchAttributeValue[]'] = '747|32302|807919|OR'
+    #payload['searchAttributeValue[0]'] = '747|32302|807919|OR'
+    #payload['searchAttributeValue[1]'] = '747|32302|748297|OR'
+    #payload['searchAttributeValue[2]'] = '747|32302|801673|OR'
+    #payload['searchAttributeValue[3]'] = '747|32302|706786|OR'
+
+#def set_cpu_market(): #set distribution cannel
+    #payload['searchAttributeValue[4]'] = '747|53|352|OR'  # 정품
+    #payload['searchAttributeValue[5]'] = '747|53|710710|OR'  # 멀티팩(정품)

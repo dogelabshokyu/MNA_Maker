@@ -15,7 +15,7 @@ physicsCate3: 0
 physicsCate4: 0
 # CodeName
 # Intel
-searchAttributeValue[]: 747|32302|807919|OR #RPL-S
+searchAttributeValue[]: 747|32302|807919|OR #RPL
 searchAttributeValue[]: 747|32302|748297|OR #ADL-S
 searchAttributeValue[]: 747|32302|742204|OR #IceLake-SP
 searchAttributeValue[]: 747|32302|725866|OR #RocketLake-S

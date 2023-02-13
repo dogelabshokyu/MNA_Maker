@@ -2,8 +2,8 @@ payload = {
     'priceRangeMinPrice': '',
     'priceRangeMaxPrice': '',
     'btnAllOptUse': 'true',
-    'searchMakerRep[]': '',
-    'searchAttributeValue[]':'',
+    'searchMaker[]': '',
+    'searchAttributeValue[]': '',
     'page': '1',
     'listCategoryCode': '751',
     'categoryCode': '751',
@@ -49,23 +49,37 @@ headers = {
     'Content-Length': '1000',
     'Content-Type': 'application/x-www-form-urlencoded',
     'Origin': 'https://prod.danawa.com',
-    'Referer': 'https://prod.danawa.com/list/?cate=112751',
+    'Referer': 'https://prod.danawa.com/list/?cate=',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
     'X-Requested-With': 'XMLHttpRequest'
 }
 
 def set_listing(a):
     payload['sortMethod'] = str(a)
+def put_categoryCode(a,b,c,d='0',e='0'):
+    payload['physicsCate1'] = str(b)
+    payload['physicsCate2'] = str(c)
+    payload['physicsCate3'] = str(d)
+    payload['physicsCate4'] = str(e)
+    payload['listCategoryCode'] = str(a)
+    payload['categoryCode'] = str(a)
 def set_cpu():
-    payload['listCategoryCode'] = '747'
-    payload['categoryCode'] = '747'
-    payload['physicsCate1'] = '861'
-    payload['physicsCate2'] = '873'
-    payload['physicsCate3'] = '0'
-    payload['physicsCate4'] = '0'
+    put_categoryCode('747', '861', '873')
+def set_mb():
+    put_categoryCode('751', '861', '875')
+def set_ram():
+    put_categoryCode('752', '861', '874')
+def set_ram_PC_DDR5():
+    put_categoryCode('41201', '861', '874')
+def set_ram_PC_DDR4():
+    put_categoryCode('1326', '861', '874')
+def set_vga():
+    put_categoryCode('753', '861', '876')
 
-#def set_cpu_maker(): # fixed Intel
-    #payload['searchMaker'] = '3156'
+def set_ssd():
+
+    put_categoryCode('760', '861', '32617')
+    payload['searchAttributeValueRep[]'] = '760|14689|86069|OR'
 
 #def set_cpu_arch(): # fixed RaptorLake
     #payload['searchAttributeValueRep[]'] = '747|32302|807919|OR'

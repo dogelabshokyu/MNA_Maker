@@ -8,87 +8,131 @@ import json
 import request_data
 import ProductID
 
+# For check V anyway
+from pyprnt import prnt
+
+import stringchesse
+
+# Danawa Product searching ajax using with HTTP POST
 url = "https://prod.danawa.com/list/ajax/getProductList.ajax.php"
 
+# Put all Product Spec
+infoJAR = {}
 
-def recompilerException(keyword, keyfrom, whenexcept):
+
+# V for Product Counting
+# count_num = 0
+
+
+def recompilerException(keyword, keyfrom, whenexcept='X', group=0):
     rce_tmp = re.compile(keyword).search(keyfrom)
     if rce_tmp == None:
         rce_tmp = whenexcept
     else:
-        rce_tmp = rce_tmp.group()
+        rce_tmp = rce_tmp.group(group)
     return rce_tmp
 
-request_data.set_cpu()
-# request_data.set_cpu_maker()
-# request_data.set_cpu_arch()
+
+def tabsonic(*args):
+    text = ''
+    for i in args:
+        text += i + "\t"
+    return text
+
+
+def sort_seller():
+    print("WIP")
+
+
+'''
+MODIFY POST PAYLOAD UNDER HERE
+'''
+# Setting POST Body Payload
 request_data.set_listing('MinPrice')  # BEST/NEW/MinPrice/MaxPrice/MaxMall/BoardCount
+request_data.payload['page'] = 1
 
-response = requests.request("post", url, headers=request_data.headers, data=request_data.payload)
-response.raise_for_status()
-yammysoup = BeautifulSoup(response.text, "lxml")
-# print(yammysoup)
+'''
+POST HTTP and Get Product List as Payload
 
-pINFO = yammysoup.findAll(class_=re.compile("^prod_item prod_layer$(?!product-pot$)"))
-# pINFO = yammysoup.findAll(class_="prod_item prod_layer width_change")
-# print(pINFO)
-infoJAR = {}
-for i in pINFO:
-    rawtext = i.text
-    purestr = rawtext \
-        .replace("		", "") \
-        .replace("\n", "") \
-        .replace("이미지보기", "") \
-        .replace("인기", "") \
-        .replace("동영상 재생", "") \
-        .replace("\t", "")
-    tmp = re.sub(' 순위[0-9]* ', "", purestr)
-    purestr = tmp
-    clrstr = rawtext \
-        .replace("		", "") \
-        .replace("\n", "") \
-        .replace("이미지보기", "") \
-        .replace("인기", "") \
-        .replace("동영상 재생", "") \
-        .replace(" 순위", "순위 ") \
-        .replace(" / ", '	') \
-        .replace("상세 스펙", "	")
+CPU prod_item prod_layer
+MB  prod_item prod_layer width_change
 
-    # pName = re.compile('^.+(?=상세 스펙)').search(purestr).group()
-    pName = recompilerException('^.+(?=상세 스펙)', purestr, 'X')
-    pSocket = recompilerException('소켓.{3,4}(?=\))', purestr, 'X')
-    pCore = recompilerException('(?<= / )[0-9+]{1,8}(?=코어)', purestr, 'X')
-    pThread = recompilerException('(?<= / ).{1,6}(?=쓰레드)', purestr, 'X')
-    pBaseCLK = recompilerException('(?<=기본 클럭: )[0-9.]+(?=GHz)', purestr, 'X')
-    pBoostCLK = recompilerException('(?<=최대 클럭: )[0-9.]+(?=GHz)', purestr, 'X')
-    pTDP = recompilerException('(?<=TDP: ).{1,10}W|(?<=PBP/MTP: ).{1,10}W', purestr, 'X')
-    pPCIE = recompilerException('PCIe[0-9., ]+(?= / )', purestr, 'X')
-    pMem0 = recompilerException('(?<=메모리 규격: )[a-zA-Z0-9, ]+(?= / )', purestr, 'X')
-    pMem1 = recompilerException('[0-9]{4}MHz|[0-9]{4}, [0-9]{4}MHz', purestr, 'X')
-    pdGPU = recompilerException('(?<=내장그래픽: ).{2,3}(?= / )', purestr, 'X')
-    if pdGPU == "탑재":
-        pdGPU = re.compile('(?<=내장그래픽: 탑재 / ).{1,15}(?= / )|(?<=내장그래픽: 탑재 / ).{1,15}(?= 등록월)') \
-            .search(purestr).group()
-    pBundleCooler = recompilerException('(?<=쿨러: ).{1,20}(?= / )|(?<=쿨러: ).{1,20}(?=등록월)|(?<=쿨러: ).{1,20}(?= 등록월)', purestr, '미기재')
-    pRiceRetail = recompilerException('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기정품)', purestr, 'X')
-    pRiceBulk = recompilerException('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기벌크)', purestr, 'X')
-    pRiceMultiRetail = recompilerException('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기멀티팩\(정품\))', purestr, 'X')
+'''
 
-    # print(rawtext)
-    # print(purestr)
-    printer = pName + '\t' \
-              + pSocket + '\t' \
-              + pCore + '\t' \
-              + pThread + '\t' \
-              + pBaseCLK + '\t' \
-              + pBoostCLK + '\t' \
-              + pTDP + '\t' \
-              + pPCIE + '\t' \
-              + pMem0 + '\t' \
-              + pMem1 + '\t' \
-              + pdGPU + '\t' \
-              + pBundleCooler + '\t' \
-              + pRiceRetail + '\t' \
-              + pRiceMultiRetail + '\t' \
-              + pRiceBulk
-    print(printer)
+
+def getProductList():
+    response = requests.request("post", url, headers=request_data.headers, data=request_data.payload)
+    response.raise_for_status()
+    yammy_soup = BeautifulSoup(response.text, "lxml")
+    return yammy_soup
+
+
+def showProductList():
+    gotList = getProductList()
+    #pINFO = gotList.findAll(class_=re.compile("^prod_item prod_layer(?! product-pot)"))
+    page_listing = gotList.findAll(class_=re.compile("^num now_on$|^num$"))
+    for j in page_listing:
+        request_data.payload['page'] = j
+        gotList = getProductList()
+        pINFO = gotList.findAll(class_=re.compile("^prod_item prod_layer(?! product-pot)"))
+        counter = range(len(pINFO))
+        for i in pINFO:
+            rawtext = i.text
+            purestr = rawtext \
+                .replace("		", "") \
+                .replace("\n", "") \
+                .replace("이미지보기", "") \
+                .replace("인기", "") \
+                .replace("동영상 재생", "") \
+                .replace("\t", "")
+            tmp_text = purestr
+            purestr = re.sub(' 순위[0-9]* ', "", tmp_text)
+            yield purestr
+
+
+'''# CPU
+request_data.set_cpu()
+for i in ProductID.CPU.values():
+    request_data.payload['searchAttributeValue[]'] = i
+    for j in showProductList():
+        a = stringchesse.string_JSON_cpu(j)
+        b = stringchesse.cooking_cpu(a)
+        print(b)
+
+# MainBoard
+request_data.set_mb()
+for i in ProductID.MainBoard['Chipset'].values():
+    request_data.payload['searchAttributeValue[]'] = i
+    for j in ProductID.MainBoard['Manufacturer'].values():
+        request_data.payload['searchMaker[]'] = j
+        for k in showProductList():
+            a = stringchesse.stringJSON_MB(k)
+            b = stringchesse.cooking_mb(a)
+            print(b)
+
+
+# RAM
+request_data.set_ram_PC_DDR5()
+for i in ProductID.RAM['Manufacturer'].values():
+    request_data.payload['searchMaker[]'] = i
+    for j in showProductList():
+        print(j)
+
+request_data.set_ram_PC_DDR4()
+for i in ProductID.RAM['Manufacturer'].values():
+    request_data.payload['searchMaker[]'] = i
+    for j in showProductList():
+        print(j)
+
+'''
+
+# VGA
+request_data.set_vga()
+for i in ProductID.VGA['GPU'].values():
+    request_data.payload['searchAttributeValue[]'] = i
+    for j in ProductID.VGA['Manufacturer'].values():
+        request_data.payload['searchMaker[]'] = j
+        for k in showProductList():
+            a = stringchesse.stringjson_vga(k)
+            b = stringchesse.cooking_vga(a)
+            print(b)

@@ -137,3 +137,8 @@ for i in ProductID.VGA['GPU'].values():
 '''
 
 # SSD
+request_data.set_ssd()
+for i in ProductID.SSD['Manufacturer'].values():
+    request_data.payload['searchMaker[]'] = i
+    for j in showProductList():
+        print(j)

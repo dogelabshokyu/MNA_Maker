@@ -1,13 +1,29 @@
 # MNA db crawler
 문나와 DB 업데이트를 위한 다나와 상품리스트 크롤러입니다.  
-ADCC 833 HokyuKim
 
+
+|    Part    | Work |
+|:----------:|:----:|
+|    CPU     |  ✓   |
+| Mainboard  |  ✓   |
+|    RAM     |  ✓   |
+|    VGA     |  ✓   |
+|    SSD     | WIP  |
+|    HDD     |  X   |
+|    CHA     |  X   |
+|    PSU     |  X   |
+|    FAN     |  X   |
+| CPU Cooler |  X   |
+|    KBD     |  X   |
+|   Mouse    |  X   |
+
+***
 ### main.py
 대가리입니다~  
 
 ### ProductID.py
-제조사의 경우 SearchMaker[] 키에 넣으시고
-기타 옵션은 searchAttributeValue[] 키에 넣으시면 됩니다~
+제조사의 경우 SearchMaker[] 에 넣으시고
+기타 옵션은 searchAttributeValue[] 에 넣으시면 됩니다~
 
 신생 제조사나 새로운 칩셋(PCH, GPU)등이 나왔다면 이 파일 수정하시면 됩니다.
 

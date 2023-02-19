@@ -21,59 +21,37 @@ def recompiler_exception(keyword, keyfrom, whenexcept='X', group=0):
 json_data = {}
 
 
-def string_JSON_cpu(purestr):
-    p_name = recompiler_exception('^.+(?= \\(.+\\).+ 스펙)', purestr, 'X')
-    p_socket = recompiler_exception('소켓.{3,4}(?=\\))', purestr, 'X')
-    p_core = recompiler_exception('(?<= / )[0-9+]{1,8}(?=코어)', purestr, 'X')
-    p_thread = recompiler_exception('(?<= / ).{1,6}(?=쓰레드)', purestr, 'X')
-    p_base_clk = recompiler_exception('(?<=기본 클럭: )[0-9.]+(?=GHz)', purestr, 'X')
-    p_boost_clk = recompiler_exception('(?<=최대 클럭: )[0-9.]+(?=GHz)', purestr, 'X')
-    p_tdp = recompiler_exception('(?<=TDP: ).{1,10}(?=W)|(?<=PBP/MTP: ).{1,10}(?=W)', purestr, 'X')
-    p_pcie = recompiler_exception('PCIe[0-9., ]+(?= / )', purestr, 'X')
-    p_mem0 = recompiler_exception('(?<=메모리 규격: )[a-zA-Z0-9, ]+(?= / )', purestr, 'X')
-    p_mem1 = recompiler_exception('[0-9]{4}MHz|[0-9]{4}, [0-9]{4}(?=MHz)', purestr, 'X')
-    p_d_gpu = recompiler_exception('(?<=내장그래픽: ).{2,3}(?= / )', purestr, 'X')
+def hotcheese_cpu(purestr):
+    p_name = recompiler_exception('^.+(?= \\(.+\\).+ 스펙)', purestr)
+    p_socket = recompiler_exception('소켓.{3,4}(?=\\))', purestr)
+    p_core = recompiler_exception('(?<= / )[0-9+]{1,8}(?=코어)', purestr)
+    p_thread = recompiler_exception('(?<= / ).{1,6}(?=쓰레드)', purestr)
+    p_base_clk = recompiler_exception('(?<=기본 클럭: )[0-9.]+(?=GHz)', purestr)
+    p_boost_clk = recompiler_exception('(?<=최대 클럭: )[0-9.]+(?=GHz)', purestr)
+    p_l2c = recompiler_exception('(?<=L2 캐시: )[0-9.]{1,5}(?=MB)', purestr)
+    p_l3c = recompiler_exception('(?<=L3 캐시: )[0-9.]{1,5}(?=MB)', purestr)
+    p_tdp = recompiler_exception('(?<=TDP: ).{1,10}(?=W)|(?<=PBP/MTP: ).{1,10}(?=W)', purestr)
+    p_pcie = recompiler_exception('PCIe[0-9., ]+(?= / )', purestr)
+    p_mem0 = recompiler_exception('(?<=메모리 규격: )[a-zA-Z0-9, ]+(?= / )', purestr)
+    p_mem1 = recompiler_exception('[0-9]{4}MHz|[0-9]{4}, [0-9]{4}(?=MHz)', purestr)
+    p_d_gpu = recompiler_exception('(?<=내장그래픽: ).{2,3}(?= / )', purestr)
     if p_d_gpu == "탑재":
         p_d_gpu = re.compile('(?<=내장그래픽: 탑재 / ).{1,15}(?= / )|(?<=내장그래픽: 탑재 / ).{1,15}(?= 등록월)') \
             .search(purestr).group()
     p_bundle_cooler = recompiler_exception('(?<=쿨러: ).{1,20}(?= / )|(?<=쿨러: ).{1,20}(?=등록월)|(?<=쿨러: ).{1,20}(?= 등록월)',
                                            purestr, '미기재')
-    p_price_retail = recompiler_exception('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기정품)', purestr, 'X')
-    p_price_bulk = recompiler_exception('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기벌크)', purestr, 'X')
-    p_price_multi = recompiler_exception('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기멀티팩\\(정품\\))', purestr, 'X')
-    jdata = \
-        {
-            'p_name': p_name,
-            'p_socket': p_socket,
-            'p_core': p_core,
-            'p_thread': p_thread,
-            'p_base_clk': p_base_clk,
-            'p_boost_clk': p_boost_clk,
-            'p_l3': 'x',
-            'p_tdp': p_tdp,
-            'p_pcie': p_pcie,
-            'p_mem0': p_mem0,
-            'p_mem1': p_mem1,
-            'p_d_gpu': p_d_gpu,
-            'p_bundle_cooler': p_bundle_cooler,
-            'p_price_retail': p_price_retail,
-            'p_price_multi': p_price_multi,
-            'p_price_bulk': p_price_bulk
-        }
-    return jdata
-
-
-def cooking_cpu(ijk):
-    item = ['p_name', 'p_price_retail', 'p_price_bulk', 'p_price_multi',
-            'p_core', 'p_thread', 'p_base_clk', 'p_boost_clk', 'p_l3', 'p_d_gpu', 'p_mem1', 'p_tdp',
-            'p_socket', 'p_bundle_cooler']
+    p_price_retail = recompiler_exception('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기정품)', purestr)
+    p_price_bulk = recompiler_exception('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기벌크)', purestr)
+    p_price_multi = recompiler_exception('(?<=[0-9]몰상품비교)[0-9,]+원(?=가격정보 더보기멀티팩\\(정품\\))', purestr)
+    item = [p_name, p_price_retail, p_price_bulk, p_price_multi,
+            p_core, p_thread, p_base_clk, p_boost_clk, p_l3c, p_d_gpu, p_mem1, p_tdp, p_socket, p_bundle_cooler]
     string = ''
     for i in item:
-        string = string + ijk[i] + '\t'
+        string = string + i + '\t'
     return string
 
 
-def stringJSON_MB(purestr):
+def hotcheese_mb(purestr):
     p_name = recompiler_exception('^.+(?=상세 스펙인텔|상세 스펙AMD)', purestr)
     p_price = recompiler_exception('(?<=상품비교)[0-9,]{1,10}원(?=가격정보 더보기)', purestr, '일시품절')
     p_socket = recompiler_exception('(?<=상세 스펙).{1,12}(?= / )', purestr)
@@ -113,33 +91,22 @@ def stringJSON_MB(purestr):
         p_rgb = 'X'
     else:
         p_rgb = 'O'
-    abc = \
-        {
-            'p_name': p_name, 'p_price': p_price, 'p_formfactor': p_formfactor,
-            'p_mem0': p_mem0, 'p_mem1': p_mem1, 'p_mem2': p_mem2, 'p_hdmi': p_hdmi, 'p_dp': p_dp,
-            'p_sata': p_sata, 'p_m2': p_m2, 'p_lan_audio': p_lan_audio,
-            'p_vrm': p_vrm, 'p_drmos': p_drmos, 'p_rgb': p_rgb
-        }
-    return abc
-
-
-def cooking_mb(qwer):
-    item = ['p_name', 'p_price', 'p_formfactor', 'p_mem0', 'p_mem1', 'p_mem2', 'p_hdmi', 'p_dp',
-            'p_sata', 'p_m2', 'p_vrm', 'p_drmos', 'p_rgb', 'p_lan_audio']
+    item = [p_name, p_price, p_formfactor, p_mem0, p_mem1, p_mem2,
+            p_hdmi, p_dp, p_sata, p_m2, p_vrm, p_drmos, p_rgb, p_lan_audio]
     string = ''
     for i in item:
-        string = string + qwer[i] + '\t'
+        string = string + i + '\t'
     return string
 
 
-def hotchesse_ram(purestr):
+def hotcheese_ram(purestr):
     p_name = recompiler_exception('(^.+(?=상세 스펙)).+ / ([DR45]+) / ([0-9]{1,5}MHz)', purestr, 'X', 1)
     p_type = recompiler_exception('(^.+(?=상세 스펙)).+ / ([DR45]+) / ([0-9]{1,5}MHz)', purestr, 'X', 2)
     p_clk = recompiler_exception('(^.+(?=상세 스펙)).+ / ([DR45]+) / ([0-9]{1,5}MHz)', purestr, 'X', 3)
     p_timing = recompiler_exception('(?<=램타이밍: )[CL0-9-]+(?= / )', purestr)
     p_voltage = recompiler_exception('(?<= / )\d\.\d\d[vV]', purestr)
     p_led = recompiler_exception('(?<=LED색상: ).{,10}(?= / |등록월)', purestr)
-    p_heatsink = recompiler_exception('(?<=히트싱크: )방열판', purestr, 'X')
+    p_heatsink = recompiler_exception('(?<=히트싱크: )방열판', purestr)
     p_heatsink_color = ''
     if p_heatsink == '방열판':
         p_heatsink = 'O'
@@ -161,7 +128,7 @@ def hotchesse_ram(purestr):
     return string
 
 
-def stringjson_vga(purestr):
+def hotcheese_vga(purestr):
     name = recompiler_exception('(^.+(?=상세 스펙))', purestr)
     price = recompiler_exception('(?<=상품비교)[0-9,]{1,10}원(?=가격정보 더보기)', purestr, '일시품절')
     base_clk = recompiler_exception('(?<=베이스클럭: ).{1,5}(?=MHz)', purestr)
@@ -173,17 +140,8 @@ def stringjson_vga(purestr):
     tdp = recompiler_exception('(?<=사용전력: 최대 )[0-9]+W(?= / )|(?<=사용전력: 최대)[0-9]+W(?= / )', purestr)
     psu = recompiler_exception('(?<=정격파워 )[0-9]+W(?= 이상)', purestr)
     core = recompiler_exception('(?<=스트림 프로세서: )[0-9]+(?=개 / )', purestr)
-    abc = \
-        {
-            'name': name, 'price': price, 'base_clk': base_clk, 'boost_clk': boost_clk,
-            'fan': fan, 'plen': plen, 'slot': slot, 'power': power, 'tdp': tdp, 'psu': psu, 'core': core
-        }
-    return abc
-
-
-def cooking_vga(qwer):
-    item = ['name', 'price', 'base_clk', 'boost_clk', 'fan', 'plen', 'slot', 'power', 'tdp', 'psu', 'core']
+    item = [name, price, base_clk, boost_clk, fan, plen, slot, power, tdp, psu, core]
     string = ''
     for i in item:
-        string = string + qwer[i] + '\t'
+        string = string + i + '\t'
     return string

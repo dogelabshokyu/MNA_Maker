@@ -11,7 +11,7 @@ import ProductID
 # For check V anyway
 from pyprnt import prnt
 
-import stringchesse
+import stringcheese
 
 # Danawa Product searching ajax using with HTTP POST
 url = "https://prod.danawa.com/list/ajax/getProductList.ajax.php"
@@ -90,10 +90,10 @@ request_data.set_cpu()
 for i in ProductID.CPU.values():
     request_data.payload['searchAttributeValue[]'] = i
     for j in showProductList():
-        a = stringchesse.string_JSON_cpu(j)
-        b = stringchesse.cooking_cpu(a)
-        print(b)
+        a = stringcheese.hotcheese_cpu(j)
+        print(a)
 '''
+
 '''
 # MainBoard
 request_data.set_mb()
@@ -102,17 +102,16 @@ for i in ProductID.MainBoard['Chipset'].values():
     for j in ProductID.MainBoard['Manufacturer'].values():
         request_data.payload['searchMaker[]'] = j
         for k in showProductList():
-            a = stringchesse.stringJSON_MB(k)
-            b = stringchesse.cooking_mb(a)
-            print(b)
+            a = stringcheese.hotcheese_mb(k)
+            print(a)
 '''
-
+'''
 # RAM
 request_data.set_ram_PC_DDR5()
 for i in ProductID.RAM['Manufacturer'].values():
     request_data.payload['searchMaker[]'] = i
     for j in showProductList():
-        a = stringchesse.hotchesse_ram(j)
+        a = stringcheese.hotcheese_ram(j)
         print(a)
 
 
@@ -120,8 +119,9 @@ request_data.set_ram_PC_DDR4()
 for i in ProductID.RAM['Manufacturer'].values():
     request_data.payload['searchMaker[]'] = i
     for j in showProductList():
-        a = stringchesse.hotchesse_ram(j)
+        a = stringcheese.hotcheese_ram(j)
         print(a)
+'''
 
 
 '''
@@ -132,7 +132,8 @@ for i in ProductID.VGA['GPU'].values():
     for j in ProductID.VGA['Manufacturer'].values():
         request_data.payload['searchMaker[]'] = j
         for k in showProductList():
-            a = stringchesse.stringjson_vga(k)
-            b = stringchesse.cooking_vga(a)
-            print(b)
+            a = stringcheese.hotcheese_vga(k)
+            print(a)
 '''
+
+# SSD

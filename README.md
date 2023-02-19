@@ -1,92 +1,24 @@
-# getProductList.ajax.php
+# MNA db crawler
+문나와 DB 업데이트를 위한 다나와 상품리스트 크롤러입니다.  
+ADCC 833 HokyuKim
 
-- Category
+### main.py
+대가리입니다~  
 
-|  CPU  |  112747  |
-|:-----:|:--------:|
+### ProductID.py
+제조사의 경우 SearchMaker[] 키에 넣으시고
+기타 옵션은 searchAttributeValue[] 키에 넣으시면 됩니다~
 
-- Marker
+신생 제조사나 새로운 칩셋(PCH, GPU)등이 나왔다면 이 파일 수정하시면 됩니다.
 
-| MARKER  |         ID          |
-|:-------:|:-------------------:|
-|  Intel  | searchMakerRep3156  |
-|   AMD   | searchMakerRep3132  |
+### request_data.py
+다나와 서버에 문 두드리는 친구입니다
 
+### stringcheese.py
+정규표현식으로 떡칠된 친구입니다.  
+제품 스펙 읽은 후 이 친구로 처리하시면 됩니다.  
+문자열 찢어 먹으니까 스트링치즈죠 ㅇㅅㅇ  
+위의 ProductID.py와 더불어 신제품 나오면 이 친구 수정할 일이 있을껍니다
 
-- codename
-
-|            Codename             |              ID               |
-|:-------------------------------:|:-----------------------------:|
-|              랩터레이크              | searchAttributeValueRep807919 |
-|              엘더레이크              | searchAttributeValueRep748297 |
-|               라파엘               | searchAttributeValueRep801673 |
-|               버미어               | searchAttributeValueRep706786 |
-|               세잔                | searchAttributeValueRep74091  |
-
-- Category
-
-
-# WIP
-## Payload
-
-```
-priceRangeMinPrice: 
-priceRangeMaxPrice: 
-btnAllOptUse: true
-searchAttributeValueRep[]: 753|658|805762|OR
-searchAttributeValue[]: 753|658|805762|OR
-page: 1
-listCategoryCode: 753
-categoryCode: 753
-physicsCate1: 861
-physicsCate2: 876
-physicsCate3: 0
-physicsCate4: 0
-viewMethod: LIST
-sortMethod: BEST
-listCount: 90
-group: 11
-depth: 2
-brandName: 
-makerName: 
-searchOptionName: 
-sDiscountProductRate: 0
-sInitialPriceDisplay: N
-sPowerLinkKeyword: 그래픽카드
-oCurrentCategoryCode: a:2:{i:1;i:97;i:2;i:753;}
-sMallMinPriceDisplayYN: undefined
-innerSearchKeyword:  -해외구매 -중고
-listPackageType: 1
-categoryMappingCode: 705
-priceUnit: 0
-priceUnitValue: 0
-priceUnitClass: 
-cmRecommendSort: N
-cmRecommendSortDefault: N
-bundleImagePreview: N
-nPackageLimit: 5
-bMakerDisplayYN: Y
-dnwSwitchOn: 
-isDpgZoneUICategory: N
-isAssemblyGalleryCategory: Y
-sProductListApi: search   
-```
-***
-priceRangeMin/MaxPrice : price range  
-btnAllOptUse : ?  
-searchAttributeValueRep / searchAttributeValue : 옵션 753(VGA). 658(NVIDIA)/657(AMD), 805762(4090)/818815(7900XTX)  
- *Rep는 리스트 상단 옵션  
-page : 서칭 페이지  
-listCategorycode : 상품 종류 753(VGA)  
-categoryCode : 위와 동일  
-physicsCate1: ?  
-physicsCate2: ?  
-physicsCate3: ?  
-physicsCate4: ?  
-viewMethod: LIST / IMAGE  
-sortMethod: BEST / NEW / MinPrice / MaxPrice / MaxMall / BoardCount  
-listCount : 페이지당 상품수 30/60/90 억지로 못 늘림
-
-sPowerLinkKeyword : 상품리스트 상단 광고 삽입용 키워드   
-innerSearchKeyword : 포함 혹은 제외(-)키워드   
-nPackageLimit : 상품 유통 방식 노출 갯수
+## Thanks to
+stackoverflow, wikidocs, monster_energy

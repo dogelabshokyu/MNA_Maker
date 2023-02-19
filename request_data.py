@@ -95,14 +95,3 @@ def set_vga():
 def set_ssd():
     put_categoryCode('760', '861', '32617')
     payload['searchAttributeValueRep[]'] = '760|14689|86069|OR'
-
-# def set_cpu_arch(): # fixed RaptorLake
-# payload['searchAttributeValueRep[]'] = '747|32302|807919|OR'
-# payload['searchAttributeValue[0]'] = '747|32302|807919|OR'
-# payload['searchAttributeValue[1]'] = '747|32302|748297|OR'
-# payload['searchAttributeValue[2]'] = '747|32302|801673|OR'
-# payload['searchAttributeValue[3]'] = '747|32302|706786|OR'
-
-# def set_cpu_market(): #set distribution cannel
-# payload['searchAttributeValue[4]'] = '747|53|352|OR'  # 정품
-# payload['searchAttributeValue[5]'] = '747|53|710710|OR'  # 멀티팩(정품)

@@ -131,11 +131,35 @@ def cooking_mb(qwer):
         string = string + qwer[i] + '\t'
     return string
 
-############# W I P - RAM #############
-def stringjson_ram(purestr):
+
+def hotchesse_ram(purestr):
     p_name = recompiler_exception('(^.+(?=상세 스펙)).+ / ([DR45]+) / ([0-9]{1,5}MHz)', purestr, 'X', 1)
-    p_mem_type = recompiler_exception('(^.+(?=상세 스펙)).+ / ([DR45]+) / ([0-9]{1,5}MHz)', purestr, 'X', 2)
-    p_mem_clk = recompiler_exception('(^.+(?=상세 스펙)).+ / ([DR45]+) / ([0-9]{1,5}MHz)', purestr, 'X', 3)
+    p_type = recompiler_exception('(^.+(?=상세 스펙)).+ / ([DR45]+) / ([0-9]{1,5}MHz)', purestr, 'X', 2)
+    p_clk = recompiler_exception('(^.+(?=상세 스펙)).+ / ([DR45]+) / ([0-9]{1,5}MHz)', purestr, 'X', 3)
+    p_timing = recompiler_exception('(?<=램타이밍: )[CL0-9-]+(?= / )', purestr)
+    p_voltage = recompiler_exception('(?<= / )\d\.\d\d[vV]', purestr)
+    p_led = recompiler_exception('(?<=LED색상: ).{,10}(?= / |등록월)', purestr)
+    p_heatsink = recompiler_exception('(?<=히트싱크: )방열판', purestr, 'X')
+    p_heatsink_color = ''
+    if p_heatsink == '방열판':
+        p_heatsink = 'O'
+        p_heatsink_color = recompiler_exception('(?<=방열판 색상: ).{,7}(?= / |등록월)', purestr)
+    else:
+        p_heatsink_color = 'X'
+    price_patteren = '(?<=몰상품비교)((([0-9,]{,10}원)가격정보 더보기|일시품절|가격비교예정)(\d{,2}GB\([0-9Gx]{,5}\)|\d{,3}GB))'
+    price_group = re.compile(price_patteren).findall(purestr)
+    price_yum = ''
+    for i in price_group:
+        if i[1] == '가격비교예정' or i[1] == '일시품절':
+            price_yum = price_yum + str(i[3]+'\t'+i[1]) + '\t'
+        else:
+            price_yum = price_yum + str(i[3]+'\t' + i[2]) + '\t'
+    item = [p_name, p_clk, p_timing, p_voltage, p_heatsink, p_heatsink_color, p_led, price_yum]
+    string = ''
+    for i in item:
+        string = string + i + '\t'
+    return string
+
 
 def stringjson_vga(purestr):
     name = recompiler_exception('(^.+(?=상세 스펙))', purestr)
@@ -155,6 +179,7 @@ def stringjson_vga(purestr):
             'fan': fan, 'plen': plen, 'slot': slot, 'power': power, 'tdp': tdp, 'psu': psu, 'core': core
         }
     return abc
+
 
 def cooking_vga(qwer):
     item = ['name', 'price', 'base_clk', 'boost_clk', 'fan', 'plen', 'slot', 'power', 'tdp', 'psu', 'core']

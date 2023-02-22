@@ -1,8 +1,11 @@
 # Python Library
+import time
+
 import requests
 import re
 from bs4 import BeautifulSoup
 import json
+import logging
 
 # USER Library
 import request_data
@@ -16,16 +19,24 @@ import stringcheese
 # Danawa Product searching ajax using with HTTP POST
 url = "https://prod.danawa.com/list/ajax/getProductList.ajax.php"
 
+# Func DEBUG
+'''
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
+logger.info("=== LOGGING START ===")
+'''
+
 # Put all Product Spec
 infoJAR = {}
-
 
 # V for Product Counting
 # count_num = 0
 
-'''
 
-'''
 def recompilerException(keyword, keyfrom, whenexcept='X', group=0):
     rce_tmp = re.compile(keyword).search(keyfrom)
     if rce_tmp == None:
@@ -44,8 +55,6 @@ MODIFY POST PAYLOAD UNDER HERE
 '''
 # Setting POST Body Payload
 request_data.set_listing('MinPrice')  # BEST/NEW/MinPrice/MaxPrice/MaxMall/BoardCount
-request_data.payload['page'] = 1
-
 
 '''
 POST HTTP and Get Product List as Payload
@@ -54,6 +63,8 @@ CPU prod_item prod_layer
 MB  prod_item prod_layer width_change
 
 '''
+
+
 def getProductList():
     response = requests.request("post", url, headers=request_data.headers, data=request_data.payload)
     response.raise_for_status()
@@ -62,11 +73,12 @@ def getProductList():
 
 
 def showProductList():
+    request_data.payload['page'] = 1
     got_list = getProductList()
-    #pINFO = got_list.findAll(class_=re.compile("^prod_item prod_layer(?! product-pot)"))
+    # pINFO = got_list.findAll(class_=re.compile("^prod_item prod_layer(?! product-pot)"))
     page_listing = got_list.findAll(class_=re.compile("^num now_on$|^num$"))
     for j in page_listing:
-        request_data.payload['page'] = j
+        request_data.payload['page'] = j.text
         got_list = getProductList()
         pINFO = got_list.findAll(class_=re.compile("^prod_item prod_layer(?! product-pot)"))
         counter = range(len(pINFO))
@@ -92,9 +104,7 @@ for i in ProductID.CPU.values():
     for j in showProductList():
         a = stringcheese.hotcheese_cpu(j)
         print(a)
-'''
 
-'''
 # MainBoard
 request_data.set_mb()
 for i in ProductID.MainBoard['Chipset'].values():
@@ -104,8 +114,7 @@ for i in ProductID.MainBoard['Chipset'].values():
         for k in showProductList():
             a = stringcheese.hotcheese_mb(k)
             print(a)
-'''
-'''
+
 # RAM
 request_data.set_ram_PC_DDR5()
 for i in ProductID.RAM['Manufacturer'].values():
@@ -121,10 +130,7 @@ for i in ProductID.RAM['Manufacturer'].values():
     for j in showProductList():
         a = stringcheese.hotcheese_ram(j)
         print(a)
-'''
 
-
-'''
 # VGA
 request_data.set_vga()
 for i in ProductID.VGA['GPU'].values():
@@ -134,7 +140,6 @@ for i in ProductID.VGA['GPU'].values():
         for k in showProductList():
             a = stringcheese.hotcheese_vga(k)
             print(a)
-'''
 
 # SSD
 request_data.set_ssd()
@@ -147,4 +152,12 @@ for i in ProductID.SSD['Manufacturer'].values():
                 .replace('Western Digital ', '')\
                 .replace(' 벌크완제품에서 적출된 상품은 제품 외관에 사용감이 있을 수 있습니다.', ' 적출벌크')
         a = stringcheese.hotcheese_ssd(j)
+        print(a)
+'''
+# HDD
+request_data.set_hdd()
+for i in ProductID.HDD['Manufacturer'].values():
+    request_data.payload['searchMaker[]'] = i
+    for j in showProductList():
+        a = stringcheese.hotchesse_hdd(j)
         print(a)

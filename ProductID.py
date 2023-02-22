@@ -125,6 +125,7 @@ VGA = \
                 'A750': '753|659|805645|'
             }
     }
+
 SSD = \
     {
         'Manufacturer':
@@ -146,6 +147,25 @@ SSD = \
                 'SK하이닉스': '4131',
                 'TeamGroup': '4142',
                 'WesternDigital': '4213'
+            }
+    }
+
+HDD = \
+    {
+        "Manufacturer":
+            {
+                'HGST': '90815',
+                'SEAGATE': '4202',
+                'TOSHIBA': '3576',
+                'WD': '4213'
+            },
+        "Type":
+            {
+                'DESKTOP': '4393',
+                'LAPTOP': '4394',
+                'NAS': '250884',
+                'CCTV': '250885',
+                'ENTERPRICE': '32109'
             }
     }
 

@@ -95,3 +95,6 @@ def set_vga():
 def set_ssd():
     put_categoryCode('760', '861', '32617')
     payload['searchAttributeValue[]'] = '760|14689|86069|OR'
+
+def set_hdd():
+    put_categoryCode('763', '861', '877')

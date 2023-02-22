@@ -18,8 +18,8 @@ def recompiler_exception(keyword, keyfrom, whenexcept='X', group=0):
     return rce_tmp
 
 
-def feature_support(pattern, string, group=0):
-    temp_str = re.compile(pattern).search(string)
+def feature_support(__pattern__, __string__, group=0):
+    temp_str = re.compile(__pattern__).search(__string__)
     if temp_str is None:
         temp_str = 'X'
     else:
@@ -184,6 +184,27 @@ def hotcheese_ssd(purestr):
     warranty = recompiler_exception('(?<=A/S기간: )\d(?=년)', purestr)  # year
     item = [name, formfactor, phy, protocol, nand_cell, controller, io_r, io_w,
             trim, gc, smart_info, ecc, devslp, slc_cache, warranty, price]
+    string = ''
+    for i in item:
+        string = string + i + '\t'
+    return string
+
+
+def hotchesse_hdd(purestr):
+    name = recompiler_exception('^.+?(?=/)', purestr)
+    type = recompiler_exception('HDD\s\((.+?)\)', purestr, 'X', 1)
+    formfactor = recompiler_exception('[0-9\.]+?(?=인치)', purestr)
+    protocol = recompiler_exception('SATA[2-3]|SA-SCSI\s\(12Gb/s\)', purestr)
+    if protocol == 'SA-SCSI (12Gb/s)':
+        protocol = 'SAS 12G'
+    buffer_cache = recompiler_exception('(?<=메모리 ).+?(?=MB)', purestr)
+    brrrrrrt = recompiler_exception('(?<= / )[\d,]+?(?=RPM)', purestr)
+    price = ''
+    price_pattern = '(?<=상품비교)(.+?원)가격정보 더보기(.+?[BGT]{2})'
+    price_group = re.compile(price_pattern).findall(purestr)
+    for i in price_group:
+        price = price + str(i[1] + '\t' + i[0] + '\t')
+    item = [name, type, formfactor, protocol, buffer_cache, brrrrrrt, price]
     string = ''
     for i in item:
         string = string + i + '\t'

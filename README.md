@@ -2,20 +2,20 @@
 문나와 DB 업데이트를 위한 다나와 상품리스트 크롤러입니다.  
 
 
-|    Part    | Work |
-|:----------:|:----:|
-|    CPU     |  ✓   |
-| Mainboard  |  ✓   |
-|    RAM     |  ✓   |
-|    VGA     |  ✓   |
-|    SSD     | WIP  |
-|    HDD     |  X   |
-|    CHA     |  X   |
-|    PSU     |  X   |
-|    FAN     |  X   |
-| CPU Cooler |  X   |
-|    KBD     |  X   |
-|   Mouse    |  X   |
+|    Part    | Work  |
+|:----------:|:-----:|
+|    CPU     |   ✓   |
+| Mainboard  |   ✓   |
+|    RAM     |   ✓   |
+|    VGA     |   ✓   |
+|    SSD     |   ✓   |
+|    HDD     |   X   |
+|    CHA     |   X   |
+|    PSU     |   X   |
+|    FAN     |   X   |
+| CPU Cooler |   X   |
+|    KBD     |   X   |
+|   Mouse    |   X   |
 
 ***
 ### main.py

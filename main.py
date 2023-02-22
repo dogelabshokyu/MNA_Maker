@@ -141,4 +141,10 @@ request_data.set_ssd()
 for i in ProductID.SSD['Manufacturer'].values():
     request_data.payload['searchMaker[]'] = i
     for j in showProductList():
-        print(j)
+        for k in ProductID.list_dist:
+            j = j\
+                .replace(k, '')\
+                .replace('Western Digital ', '')\
+                .replace(' 벌크완제품에서 적출된 상품은 제품 외관에 사용감이 있을 수 있습니다.', ' 적출벌크')
+        a = stringcheese.hotcheese_ssd(j)
+        print(a)

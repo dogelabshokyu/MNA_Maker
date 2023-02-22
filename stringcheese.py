@@ -18,7 +18,13 @@ def recompiler_exception(keyword, keyfrom, whenexcept='X', group=0):
     return rce_tmp
 
 
-json_data = {}
+def feature_support(pattern, string, group=0):
+    temp_str = re.compile(pattern).search(string)
+    if temp_str is None:
+        temp_str = 'X'
+    else:
+        temp_str = 'O'
+    return temp_str
 
 
 def hotcheese_cpu(purestr):
@@ -113,14 +119,14 @@ def hotcheese_ram(purestr):
         p_heatsink_color = recompiler_exception('(?<=방열판 색상: ).{,7}(?= / |등록월)', purestr)
     else:
         p_heatsink_color = 'X'
-    price_patteren = '(?<=몰상품비교)((([0-9,]{,10}원)가격정보 더보기|일시품절|가격비교예정)(\d{,2}GB\([0-9Gx]{,5}\)|\d{,3}GB))'
-    price_group = re.compile(price_patteren).findall(purestr)
+    price_pattern = '(?<=몰상품비교)((([0-9,]{,10}원)가격정보 더보기|일시품절|가격비교예정)(\d{,2}GB\([0-9Gx]{,5}\)|\d{,3}GB))'
+    price_group = re.compile(price_pattern).findall(purestr)
     price_yum = ''
     for i in price_group:
         if i[1] == '가격비교예정' or i[1] == '일시품절':
-            price_yum = price_yum + str(i[3]+'\t'+i[1]) + '\t'
+            price_yum = price_yum + str(i[3] + '\t' + i[1]) + '\t'
         else:
-            price_yum = price_yum + str(i[3]+'\t' + i[2]) + '\t'
+            price_yum = price_yum + str(i[3] + '\t' + i[2]) + '\t'
     item = [p_name, p_clk, p_timing, p_voltage, p_heatsink, p_heatsink_color, p_led, price_yum]
     string = ''
     for i in item:
@@ -141,6 +147,43 @@ def hotcheese_vga(purestr):
     psu = recompiler_exception('(?<=정격파워 )[0-9]+W(?= 이상)', purestr)
     core = recompiler_exception('(?<=스트림 프로세서: )[0-9]+(?=개 / )', purestr)
     item = [name, price, base_clk, boost_clk, fan, plen, slot, power, tdp, psu, core]
+    string = ''
+    for i in item:
+        string = string + i + '\t'
+    return string
+
+
+def hotcheese_ssd(purestr):
+    name = recompiler_exception('(^.+(?=상세 스펙))', purestr)
+    price_pattern = '(?<=몰상품비교)((([0-9,]{,10}원)가격정보 더보기|일시품절|가격비교예정)([0-9.,]{,5}TB|[0-9.,]{,5}GB))'
+    price_group = re.compile(price_pattern).findall(purestr)
+    price_yum = ''
+    for i in price_group:
+        if i[1] == '가격비교예정' or i[1] == '일시품절':
+            price_yum = price_yum + str(i[3] + '\t' + i[1]) + '\t'
+        else:
+            price_yum = price_yum + str(i[3] + '\t' + i[2]) + '\t'
+    price = price_yum
+    formfactor = recompiler_exception('(?<=상세 스펙내장형SSD / ).{,13}(?= / )', purestr)
+    phy = recompiler_exception('SATA\d|PCIe\d\.0x\d', purestr)
+    protocol = recompiler_exception('(?<= / )(NVMe [a-z0-9.]{1,4}|NVMe)(?= / )', purestr)
+    dram = recompiler_exception('DDR.+?(?= / )', purestr)
+    nand_3d = recompiler_exception('3D낸드', purestr)
+    nand_cell = recompiler_exception('(?<= / )(SLC|MLC|TLC|QLC)(?=\()', purestr)
+    if nand_3d == '3D낸드':
+        nand_cell = '3D ' + nand_cell
+    controller = recompiler_exception('(?<= / 컨트롤러: ).+?(?= / )', purestr)
+    io_r = recompiler_exception('((?<=순차읽기: )[0-9,]+?(?=MB))|((?<=순차읽기: 최대 )[0-9,]+?(?=MB))', purestr)
+    io_w = recompiler_exception('(?<=순차쓰기: )[0-9,]+?(?=MB)', purestr)
+    trim = feature_support('TRIM', purestr)
+    gc = feature_support('GC', purestr)
+    smart_info = feature_support('S\.M\.A\.R\.T', purestr)
+    ecc = feature_support('ECC', purestr)
+    devslp = feature_support('DEVSLP', purestr)
+    slc_cache = feature_support('SLC.[캐시싱]{,2}', purestr)
+    warranty = recompiler_exception('(?<=A/S기간: )\d(?=년)', purestr)  # year
+    item = [name, formfactor, phy, protocol, nand_cell, controller, io_r, io_w,
+            trim, gc, smart_info, ecc, devslp, slc_cache, warranty, price]
     string = ''
     for i in item:
         string = string + i + '\t'

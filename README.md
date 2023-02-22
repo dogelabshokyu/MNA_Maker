@@ -9,7 +9,7 @@
 |    RAM     |   ✓   |
 |    VGA     |   ✓   |
 |    SSD     |   ✓   |
-|    HDD     |   v   |
+|    HDD     |   ✓   |
 |    CHA     |   X   |
 |    PSU     |   X   |
 |    FAN     |   X   |

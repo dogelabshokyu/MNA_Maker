@@ -18,7 +18,7 @@ def recompiler_exception(keyword, keyfrom, whenexcept='X', group=0):
     return rce_tmp
 
 
-def feature_support(__pattern__, __string__, group=0):
+def feature_support(__pattern__, __string__):
     temp_str = re.compile(__pattern__).search(__string__)
     if temp_str is None:
         temp_str = 'X'
@@ -190,7 +190,7 @@ def hotcheese_ssd(purestr):
     return string
 
 
-def hotchesse_hdd(purestr):
+def hotcheese_hdd(purestr):
     name = recompiler_exception('^.+?(?=/)', purestr)
     type = recompiler_exception('HDD\s\((.+?)\)', purestr, 'X', 1)
     formfactor = recompiler_exception('[0-9\.]+?(?=인치)', purestr)
@@ -205,6 +205,72 @@ def hotchesse_hdd(purestr):
     for i in price_group:
         price = price + str(i[1] + '\t' + i[0] + '\t')
     item = [name, type, formfactor, protocol, buffer_cache, brrrrrrt, price]
+    string = ''
+    for i in item:
+        string = string + i + '\t'
+    return string
+
+
+def hotcheese_cha(purestr):
+    name = recompiler_exception('^.+?(?=상세 스펙)', purestr)
+    price = ''
+    price_pattern = '(?<=상품비교)(.+?원)가격정보 더보기(.+?(?=$|\d)|$)'
+    price_group = re.compile(price_pattern).findall(purestr)
+    for i in price_group:
+        price = price + str(i[1] + '\t' + i[0] + '\t')
+    type = recompiler_exception('빅타워|미들타워|미니ITX|미니타워|슬림|마이크로타워|랙마운트|데스크탑', purestr)
+    mb_eatx = feature_support('Extended-ATX', purestr)
+    mb_atx = feature_support('표쥰-ATX', purestr)
+    mb_matx = feature_support('Micro-ATx', purestr)
+    mb_itx = feature_support('ITX', purestr)
+    cha_side = recompiler_exception('(?<=측면: ).+?(?= / )', purestr)
+    cha_width = recompiler_exception('(?<=너비\(W\): )\d+?(?=mm)', purestr)
+    cha_height = recompiler_exception('(?<=높이\(H\): )\d+?(?=mm)', purestr)
+    cha_depth = recompiler_exception('(?<=깊이\(D\): )\d+?(?=mm)', purestr)
+    cha_vga = recompiler_exception('(?<=GPU 장착: )\d+?(?=mm)', purestr)
+    cha_cpu = recompiler_exception('(?<=CPU쿨러 장착: )\d+?(?=mm)', purestr)
+    item = [name, type, mb_eatx, mb_atx, mb_matx, mb_itx,
+            cha_side, cha_width, cha_height, cha_depth, cha_vga, cha_cpu, price]
+    string = ''
+    for i in item:
+        string = string + i + '\t'
+    return string
+
+def hotcheese_psu(purestr):
+    name = recompiler_exception('^.+?(?=상세 스펙)', purestr)
+    price = ''
+    price_pattern = '(?<=상품비교)(.+?원)가격정보 더보기(.+?(?=$|\d)|$)'
+    price_group = re.compile(price_pattern).findall(purestr)
+    for i in price_group:
+        price = price + str(i[1] + '\t' + i[0] + '\t')
+    type = recompiler_exception('(?<=상세 스펙M-ATX\()SFX(?=\) 파워)|(?<=상세 스펙)ATX(?= 파워)', purestr)
+    wattage = recompiler_exception('(?<=정격출력: )[0-9]+?(?=W)', purestr)
+    cert_80p = recompiler_exception('(?<= / 80 PLUS ).+?(?= / )', purestr)
+    cert_eta = recompiler_exception('(?<= / ETA인증: ).+?(?= / )', purestr)
+    cert_lambda = recompiler_exception('(?<= / LAMBDA인증: ).+?(?= / )', purestr)
+    apfc = feature_support('액티브PFC', purestr)
+    rail = recompiler_exception('\+12V (싱글레일|다중레일|싱글/다중)', purestr)
+    if rail == '+12V 싱글레일':
+        rail = 's'
+    if rail == '+12V 다중레일':
+        rail = 'm'
+    if rail == '+12V 싱글/다중':
+        rail = 'd'
+    p12vp = recompiler_exception('(?<=\+12V 가용률: ).+?(?= / )', purestr)
+    con_ide = recompiler_exception('(?<=IDE 4핀: )\d+(?=개)', purestr)
+    con_sata = recompiler_exception('(?<=SATA: )\d+(?=개)', purestr)
+    con_pcie6 = recompiler_exception('(?<=PCIe 6핀: )\d+(?=개)', purestr)
+    con_pcie8 = recompiler_exception('(?<=PCIe 8핀\(6\+2\): )\d+(?=개)', purestr)
+    con_pcie16 = recompiler_exception('(?<=PCIe 16핀\(12\+4\): )\d+(?=개)', purestr)
+    cable_modular = recompiler_exception('(?<=\[커넥터\] )(풀모듈러|세미모듈러|케이블일체형)(?= / )', purestr)
+    ttaw1 = feature_support('대기전력 1W 미만', purestr)
+    cable_flat = feature_support('플랫케이블', purestr)
+    fv = feature_support('프리볼트', purestr)
+    depth = recompiler_exception('(?<=깊이: ).+?(?=mm)', purestr)
+    warranty_f = recompiler_exception('(?<=무상 )\d+?(?=년)', purestr)
+    warranty_p = recompiler_exception('(?<=유상 )\d+?(?=년)', purestr)
+    item = [name, type, wattage, apfc, rail, p12vp, con_ide, con_pcie6, con_pcie8, con_pcie16, cable_modular, ttaw1,
+            cable_flat, fv, depth, cert_80p, cert_eta, cert_lambda,warranty_f,warranty_p ,price]
     string = ''
     for i in item:
         string = string + i + '\t'

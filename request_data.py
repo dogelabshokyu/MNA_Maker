@@ -67,34 +67,56 @@ def put_categoryCode(a, b, c, d='0', e='0'):
     payload['listCategoryCode'] = str(a)
     payload['categoryCode'] = str(a)
 
+def payload_reset():
+    payload['searchAttributeValue[]'] = ''
+    payload['searchMaker[]'] = ''
+    payload['searchAttributeValue[]'] = ''
 
 def set_cpu():
+    payload_reset()
     put_categoryCode('747', '861', '873')
 
 
 def set_mb():
+    payload_reset()
     put_categoryCode('751', '861', '875')
 
 
 def set_ram():
+    payload_reset()
     put_categoryCode('752', '861', '874')
 
 
 def set_ram_PC_DDR5():
+    payload_reset()
     put_categoryCode('41201', '861', '874')
 
 
 def set_ram_PC_DDR4():
+    payload_reset()
     put_categoryCode('1326', '861', '874')
 
 
 def set_vga():
+    payload_reset()
     put_categoryCode('753', '861', '876')
 
 
 def set_ssd():
+    payload_reset()
     put_categoryCode('760', '861', '32617')
     payload['searchAttributeValue[]'] = '760|14689|86069|OR'
 
 def set_hdd():
+    payload_reset()
     put_categoryCode('763', '861', '877')
+
+
+def set_cha():
+    payload_reset()
+    put_categoryCode('775', '861', '879')
+    payload['searchAttributeValue[]'] = '775|976|5160|OR'
+
+def set_psu():
+    payload_reset()
+    put_categoryCode('777', '861', '880')

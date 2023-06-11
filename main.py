@@ -40,10 +40,6 @@ def recompilerException(keyword, keyfrom, whenexcept='X', group=0):
     return rce_tmp
 
 
-def sort_seller():
-    print("WIP")
-
-
 '''
 MODIFY POST PAYLOAD UNDER HERE
 '''
@@ -65,11 +61,9 @@ def getProductList():
     yammy_soup = BeautifulSoup(response.text, "lxml")
     return yammy_soup
 
-
 def showProductList():
     request_data.payload['page'] = 1
     got_list = getProductList()
-    # pINFO = got_list.findAll(class_=re.compile("^prod_item prod_layer(?! product-pot)"))
     page_listing = got_list.findAll(class_=re.compile("^num now_on$|^num$"))
     for j in page_listing:
         request_data.payload['page'] = j.text
@@ -89,68 +83,87 @@ def showProductList():
             purestr = re.sub(' 순위[0-9]* ', "", tmp_text)
             yield purestr
 
+def best_product():
+    request_data.payload['page'] = 1
+    request_data.payload['listCount'] = 30
+    got_list = getProductList()
+    request_data.payload['listCount'] = 90
+    pINFO = got_list.findAll(class_=re.compile("^prod_item prod_layer(?! product-pot)"))
+    for i in pINFO:
+        rawtext = i.text
+        purestr = rawtext \
+            .replace("		", "") \
+            .replace("\n", "") \
+            .replace("이미지보기", "") \
+            .replace("인기", "") \
+            .replace("동영상 재생", "") \
+            .replace("\t", "")
+        tmp_text = purestr
+        purestr = re.sub(' 순위[0-9]* ', "", tmp_text)
+        yield purestr
+
 # CPU
 logger.info("CPU START")
-output = open("./crawl_data/CPU.txt", "a+")
-output.write("제품\t정품\t벌크\t멀티팩\t코어\t쓰레드\t정규\t터보\tL3캐시\t내장그래픽\t메모리 지원클럭\tTDP\t소켓\t쿨러\n")
+output = open("./crawl_data/CPU.xls", "a+")
+output.write(stringcheese.tabsonic("제품", "정품", "벌크", "멀티팩",
+                      "코어", "쓰레드", "정규", "터보", "L3캐시",
+                      "내장그래픽", "메모리 지원클럭", "TDP", "소켓", "쿨러")+"\n")
 request_data.set_cpu()
 for i in ProductID.CPU.values():
     request_data.payload['searchAttributeValue[]'] = i
     for j in showProductList():
         a = stringcheese.hotcheese_cpu(j)
-        # print(a)
         output.write(a + "\n")
 output.close()
 logger.info("CPU DONE")
 
 # MainBoard
 logger.info("MAINBOARD START")
-output = open("./crawl_data/MAINBOARD.txt", "a+")
+output = open("./crawl_data/MAINBOARD.xls", "a+")
 output.write("제품\t가격\t폼팩터\t램\t클럭\t슬롯\tHDMI\tDP\tSATA\tM.2\t전원부\tDr.MOS\tRGB\tetc(LAN, AUDIO)\n")
 request_data.set_mb()
 for i in ProductID.MainBoard['Chipset'].values():
+    output.write('\n')
+    pch = list(ProductID.MainBoard['Chipset'].keys())[list(ProductID.MainBoard['Chipset'].values()).index(i)]\
+        .replace('Intel_','').replace('AMD_','')
+    output.write("\'====="+pch+'=====\n')
     request_data.payload['searchAttributeValue[]'] = i
     for j in ProductID.MainBoard['Manufacturer'].values():
         request_data.payload['searchMaker[]'] = j
         for k in showProductList():
             a = stringcheese.hotcheese_mb(k)
-            # print(a)
             output.write(a + "\n")
 output.close()
 logger.info("MAINBOARD DONE")
 
-
 # RAM
 logger.info("DDR5 RAM START")
-output = open("./crawl_data/RAM_DDR5.txt", "a+")
+output = open("./crawl_data/RAM_DDR5.xls", "a+")
 output.write("제품명\t클럭\t타이밍\t전압\t히트싱크\t색상\tLED\t용량+가격\n")
 request_data.set_ram_PC_DDR5()
 for i in ProductID.RAM['Manufacturer'].values():
     request_data.payload['searchMaker[]'] = i
     for j in showProductList():
         a = stringcheese.hotcheese_ram(j)
-        # print(a)
         output.write(a + "\n")
 output.close()
 logger.info("DDR5 RAM DONE")
 
 logger.info("DDR4 RAM START")
-output = open("./crawl_data/RAM_DDR4.txt", "a+")
+output = open("./crawl_data/RAM_DDR4.xls", "a+")
 output.write("제품명\t클럭\t타이밍\t전압\t히트싱크\t색상\tLED\t용량+가격\n")
 request_data.set_ram_PC_DDR4()
 for i in ProductID.RAM['Manufacturer'].values():
     request_data.payload['searchMaker[]'] = i
     for j in showProductList():
         a = stringcheese.hotcheese_ram(j)
-        # print(a)
         output.write(a + "\n")
 output.close()
 logger.info("DDR4 RAM DONE")
 
-
 # VGA
 logger.info("VGA START")
-output = open("./crawl_data/VGA.txt", "a+")
+output = open("./crawl_data/VGA.xls", "a+")
 output.write("제품\t가격\t정규클럭\t부스트클럭\t팬\t길이\t두께\t전원입력\t소모전력\t권장파워\tCUDA/SP\n")
 request_data.set_vga()
 for i in ProductID.VGA['GPU'].values():
@@ -159,7 +172,6 @@ for i in ProductID.VGA['GPU'].values():
         request_data.payload['searchMaker[]'] = j
         for k in showProductList():
             a = stringcheese.hotcheese_vga(k)
-            # print(a)
             output.write(a + "\n")
 output.close()
 logger.info("VGA DONE")
@@ -176,14 +188,12 @@ for i in ProductID.SSD['Manufacturer'].values():
         for k in ProductID.list_dist:
             j = j \
                 .replace(k, '') \
-                .replace('Western Digital ', '') \
+                .replace('Western Digital WD', 'Western Digital') \
                 .replace(' 벌크완제품에서 적출된 상품은 제품 외관에 사용감이 있을 수 있습니다.', ' 적출벌크')
         a = stringcheese.hotcheese_ssd(j)
-        # print(a)
         output.write(a + "\n")
 output.close()
 logger.info("SSD DONE")
-
 
 # HDD
 logger.info("HDD START")
@@ -193,8 +203,8 @@ request_data.set_hdd()
 for i in ProductID.HDD['Manufacturer'].values():
     request_data.payload['searchMaker[]'] = i
     for j in showProductList():
+        j = j.replace('Western Digital WD', 'Western Digital')
         a = stringcheese.hotcheese_hdd(j)
-        # print(a)
         output.write(a + "\n")
 output.close()
 logger.info("HDD DONE")
@@ -202,23 +212,22 @@ logger.info("HDD DONE")
 
 # CHA
 logger.info("CHA START")
-output = open("./crawl_data/CHA.txt", "a+")
+output = open("./crawl_data/CHA.xls", "a+")
 output.write("제품명\t종류\tE-ATX\tATX\tmATX\tITX\t측면\t폭\t높이\t깊이\tVGA 지원\tCPU쿨러 지원\t가격(색상)\n")
 request_data.set_cha()
 for i in ProductID.CHA['Manufacturer'].values():
     request_data.payload['searchMaker[]'] = i
     for j in showProductList():
         a = stringcheese.hotcheese_cha(j)
-        # print(a)
         output.write(a + "\n")
 output.close()
 logger.info("CHA DONE")
 
-
 # PSU
 logger.info("PSU START")
-output = open("./crawl_data/PSU.txt", "a+")
-output.write("제품\t종류\t정격\tActive PFC\t레일\t12V 가용률\tIDE\tPCIe 6핀\tPCIe 8핀\tPCIe 16핀\t모듈러\t대기전력 1W\t플랫케이블\t프리볼트\t깊이\t80+\tETA\tLAMBDA\t무상AS\t유상AS\t가격\n")
+output = open("./crawl_data/PSU.xls", "a+")
+output.write(
+    "제품\t종류\t정격\tActive PFC\t레일\t12V 가용률\tIDE\tPCIe 6핀\tPCIe 8핀\tPCIe 16핀\t모듈러\t대기전력 1W\t플랫케이블\t프리볼트\t깊이\t80+\tETA\tLAMBDA\t무상AS\t유상AS\t가격\n")
 request_data.set_psu()
 for i in ProductID.PSU['Manufacturer'].values():
     request_data.payload['searchMaker[]'] = i
@@ -229,4 +238,35 @@ for i in ProductID.PSU['Manufacturer'].values():
             output.write(a + "\n")
 output.close()
 logger.info("PSU DONE")
+
+# cooling
+logger.info("COOLING START")
+output = open("./crawl_data/COOLING.txt", "a+")
+output.write("COOLER\n")
+request_data.set_listing('BEST')
+request_data.set_cpu_cooler()
+for i in best_product():
+    logger.info(i)
+    output.write(i + "\n")
+output.close()
+
+output = open("./crawl_data/AIO_COOLER.txt", "a+")
+output.write("AIO COOLER\n")
+request_data.set_listing('BEST')
+request_data.set_cpu_aio()
+for i in best_product():
+    logger.info(i)
+    output.write(i + "\n")
+output.close()
+
+output = open("./crawl_data/SYS_FAN.txt", "a+")
+output.write("SYS FAN\n")
+request_data.set_listing('BEST')
+request_data.set_sys_fan()
+for i in best_product():
+    logger.info(i)
+    output.write(i + "\n")
+output.close()
+
+logger.info("COOLING DONE")
 logger.info('END')

@@ -59,13 +59,21 @@ def set_listing(a):
     payload['sortMethod'] = str(a)
 
 
-def put_categoryCode(a, b, c, d='0', e='0'):
-    payload['physicsCate1'] = str(b)
-    payload['physicsCate2'] = str(c)
-    payload['physicsCate3'] = str(d)
-    payload['physicsCate4'] = str(e)
+def put_categoryCode(listcatecode, phycate1, phycate2, phycate3='0', phycate4='0'):
+    payload['listCategoryCode'] = str(listcatecode)
+    payload['categoryCode'] = str(listcatecode)
+    payload['physicsCate1'] = str(phycate1)
+    payload['physicsCate2'] = str(phycate2)
+    payload['physicsCate3'] = str(phycate3)
+    payload['physicsCate4'] = str(phycate4)
+
+def put_detailcategorycode(a, b, c, d, e='0', f='0'):
     payload['listCategoryCode'] = str(a)
-    payload['categoryCode'] = str(a)
+    payload['categoryCode'] = str(b)
+    payload['physicsCate1'] = str(c)
+    payload['physicsCate2'] = str(d)
+    payload['physicsCate3'] = str(e)
+    payload['physicsCate4'] = str(f)
 
 def payload_reset():
     payload['searchAttributeValue[]'] = ''
@@ -120,3 +128,16 @@ def set_cha():
 def set_psu():
     payload_reset()
     put_categoryCode('777', '861', '880')
+
+
+def set_cpu_cooler():
+    payload_reset()
+    put_categoryCode('30256', '862', '887')
+
+def set_cpu_aio():
+    payload_reset()
+    put_categoryCode('1545', '862', '887')
+
+def set_sys_fan():
+    payload_reset()
+    put_categoryCode('1548', '862', '887')

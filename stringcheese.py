@@ -59,6 +59,7 @@ def hotcheese_cpu(purestr):
 
 def hotcheese_mb(purestr):
     p_name = recompiler_exception('^.+(?=상세 스펙인텔|상세 스펙AMD)', purestr)
+    p_name = no_distributor(p_name)
     p_price = recompiler_exception('(?<=상품비교)[0-9,]{1,10}원(?=가격정보 더보기)', purestr, '일시품절')
     p_socket = recompiler_exception('(?<=상세 스펙).{1,12}(?= / )', purestr)
     p_pch = recompiler_exception('((?<=상세 스펙).{1,15}(?<= / ))(AMD |인텔 )([a-zA-Z][0-9]{3}(?= / ))', purestr, 'X', 3)
@@ -121,17 +122,20 @@ def hotcheese_ram(purestr):
         p_heatsink_color = 'X'
     price_pattern = '(?<=몰상품비교)((([0-9,]{,10}원)가격정보 더보기|일시품절|가격비교예정)(\d{,2}GB\([0-9Gx]{,5}\)|\d{,3}GB))'
     price_group = re.compile(price_pattern).findall(purestr)
-    price_yum = ''
-    for i in price_group:
-        if i[1] == '가격비교예정' or i[1] == '일시품절':
-            price_yum = price_yum + str(i[3] + '\t' + i[1]) + '\t'
-        else:
-            price_yum = price_yum + str(i[3] + '\t' + i[2]) + '\t'
-    item = [p_name, p_clk, p_timing, p_voltage, p_heatsink, p_heatsink_color, p_led, price_yum]
     string = ''
-    for i in item:
-        string = string + i + '\t'
-    return string
+    zipped = ''
+    for i in price_group:
+        price_yum = ''
+        if i[1] == '가격비교예정' or i[1] == '일시품절':
+            price_yum = str(i[3] + '\t' + i[1])
+        else:
+            price_yum = str(i[3] + '\t' + i[2])
+        item = [p_name, p_clk, p_timing, p_voltage, p_heatsink, p_heatsink_color, p_led, price_yum]
+        string = ''
+        for i in item:
+            string = string + i + '\t'
+        zipped = zipped + string + '\n'
+    return zipped
 
 
 def hotcheese_vga(purestr):
@@ -141,7 +145,7 @@ def hotcheese_vga(purestr):
     boost_clk = recompiler_exception('(?<=부스트클럭: ).{1,5}(?=MHz)', purestr)
     fan = recompiler_exception('(?<= / ).(?=개 팬)', purestr)
     plen = recompiler_exception('(?<=가로\(길이\): ).{,7}(?=mm)', purestr)
-    slot = recompiler_exception('(?<=높이\(두께\): ).{,7}(?=mm)', purestr)
+    slot = recompiler_exception('(?<=두께\: ).{,7}(?=mm)', purestr)
     power = recompiler_exception('(?<=전원 포트: ).{,9}핀 x.개(?= / )', purestr)
     tdp = recompiler_exception('(?<=사용전력: 최대 )[0-9]+W(?= / )|(?<=사용전력: 최대)[0-9]+W(?= / )', purestr)
     psu = recompiler_exception('(?<=정격파워 )[0-9]+W(?= 이상)', purestr)
@@ -155,15 +159,6 @@ def hotcheese_vga(purestr):
 
 def hotcheese_ssd(purestr):
     name = recompiler_exception('(^.+(?=상세 스펙))', purestr)
-    price_pattern = '(?<=몰상품비교)((([0-9,]{,10}원)가격정보 더보기|일시품절|가격비교예정)([0-9.,]{,5}TB|[0-9.,]{,5}GB))'
-    price_group = re.compile(price_pattern).findall(purestr)
-    price_yum = ''
-    for i in price_group:
-        if i[1] == '가격비교예정' or i[1] == '일시품절':
-            price_yum = price_yum + str(i[3] + '\t' + i[1]) + '\t'
-        else:
-            price_yum = price_yum + str(i[3] + '\t' + i[2]) + '\t'
-    price = price_yum
     formfactor = recompiler_exception('(?<=상세 스펙내장형SSD / ).{,13}(?= / )', purestr)
     phy = recompiler_exception('SATA\d|PCIe\d\.0x\d', purestr)
     protocol = recompiler_exception('(?<= / )(NVMe [a-z0-9.]{1,4}|NVMe)(?= / )', purestr)
@@ -182,13 +177,24 @@ def hotcheese_ssd(purestr):
     devslp = feature_support('DEVSLP', purestr)
     slc_cache = feature_support('SLC.[캐시싱]{,2}', purestr)
     warranty = recompiler_exception('(?<=A/S기간: )\d(?=년)', purestr)  # year
-    item = [name, formfactor, phy, protocol, nand_cell, controller, io_r, io_w,
-            trim, gc, smart_info, ecc, devslp, slc_cache, warranty, price]
+    listed_date = recompiler_exception('(?<=등록월)\d{4}.\d{2}.', purestr)
+    price_pattern = '(?<=몰상품비교)((([0-9,]{,10}원)가격정보 더보기|일시품절|가격비교예정)([0-9.,]{,5}TB|[0-9.,]{,5}GB))'
+    price_group = re.compile(price_pattern).findall(purestr)
     string = ''
-    for i in item:
-        string = string + i + '\t'
-    return string
-
+    zipped = ''
+    price_yum = ''
+    for i in price_group:
+        if i[1] == '가격비교예정' or i[1] == '일시품절':
+            price_yum = str(i[3] + '\t' + i[1])
+        else:
+            price_yum = str(i[3] + '\t' + i[2])
+        price = price_yum
+        item = [name, formfactor, phy, protocol, nand_cell, controller, io_r, io_w,
+                trim, gc, smart_info, ecc, devslp, slc_cache, warranty, price, listed_date]
+        for i in item:
+            string = string + i + '\t'
+        zipped = zipped + string + '\n'
+    return zipped
 
 def hotcheese_hdd(purestr):
     name = recompiler_exception('^.+?(?=/)', purestr)
@@ -202,9 +208,10 @@ def hotcheese_hdd(purestr):
     price = ''
     price_pattern = '(?<=상품비교)(.+?원)가격정보 더보기(.+?[BGT]{2})'
     price_group = re.compile(price_pattern).findall(purestr)
+    listed_date = recompiler_exception('(?<=등록월)\d{4}.\d{2}.', purestr)
     for i in price_group:
         price = price + str(i[1] + '\t' + i[0] + '\t')
-    item = [name, type, formfactor, protocol, buffer_cache, brrrrrrt, price]
+    item = [name, type, formfactor, protocol, buffer_cache, brrrrrrt, price, listed_date]
     string = ''
     for i in item:
         string = string + i + '\t'
@@ -229,12 +236,14 @@ def hotcheese_cha(purestr):
     cha_depth = recompiler_exception('(?<=깊이\(D\): )\d+?(?=mm)', purestr)
     cha_vga = recompiler_exception('(?<=GPU 장착: )\d+?(?=mm)', purestr)
     cha_cpu = recompiler_exception('(?<=CPU쿨러 장착: )\d+?(?=mm)', purestr)
+    listed_date = recompiler_exception('(?<=등록월)\d{4}.\d{2}.', purestr)
     item = [name, type, mb_eatx, mb_atx, mb_matx, mb_itx,
-            cha_side, cha_width, cha_height, cha_depth, cha_vga, cha_cpu, price]
+            cha_side, cha_width, cha_height, cha_depth, cha_vga, cha_cpu, price, listed_date]
     string = ''
     for i in item:
         string = string + i + '\t'
     return string
+
 
 def hotcheese_psu(purestr):
     name = recompiler_exception('^.+?(?=상세 스펙)', purestr)
@@ -270,8 +279,34 @@ def hotcheese_psu(purestr):
     warranty_f = recompiler_exception('(?<=무상 )\d+?(?=년)', purestr)
     warranty_p = recompiler_exception('(?<=유상 )\d+?(?=년)', purestr)
     item = [name, type, wattage, apfc, rail, p12vp, con_ide, con_pcie6, con_pcie8, con_pcie16, cable_modular, ttaw1,
-            cable_flat, fv, depth, cert_80p, cert_eta, cert_lambda,warranty_f,warranty_p ,price]
+            cable_flat, fv, depth, cert_80p, cert_eta, cert_lambda, warranty_f, warranty_p, price]
     string = ''
     for i in item:
         string = string + i + '\t'
     return string
+
+
+def hotcheese_cooling(__str__):
+    name = recompiler_exception('^.+?(?=상세 스펙)', __str__)
+    cooler_style = recompiler_exception('(?<=상세 스펙CPU 쿨러 / ).+?(?= / )', __str__)
+    tdp = recompiler_exception('(?<=TDP: ).+?(?= / )', __str__)
+    width = recompiler_exception('(?<=가로: ).+?(?= / )', __str__)
+    depth = recompiler_exception('(?<=세로: ).+?(?= / )', __str__)
+    height = recompiler_exception('(?<=높이: ).+?(?= / )', __str__)
+    fan_comp = recompiler_exception('(?<=팬 크기: ).+?(?= / ).+?(?= / )', __str__)
+    
+
+
+def no_distributor(__string__):
+    dist_list = {'STCOM', '가넷', '대양케이스', '대원씨티에스', '디앤디컴', '디어스엠', '마이크로닉스', '서린', '아이보라', '에즈윈', '에즈윈아이피씨', '인텍앤컴퍼니',
+                 '제이씨현', '코잇', '타이안코리아', '피씨디렉트'}
+    for i in dist_list:
+        w_space = " "+i
+        __string__ = __string__.replace(w_space, "")
+    return __string__
+
+def no_suffix(__string__):
+    suffix_list = {' NEW', '※ 23년 3월부로 제조사 요청에 의해 상품명이 V2로 변경되었습니다.'}
+
+def exclude_prod(__string__):
+    exclude_keyword = {}
